@@ -1,0 +1,11 @@
+<AssignMessage name="AV-InvalidNonce">
+  <AssignVariable>
+    <Name>error_type</Name>
+    <Value>invalid_nonce</Value>
+  </AssignVariable>
+  <AssignVariable>
+    <Name>error_description</Name>
+    <Value>The nonce is invalid</Value>
+  </AssignVariable>
+  <IgnoreUnresolvedVariables>true</IgnoreUnresolvedVariables>
+</AssignMessage>

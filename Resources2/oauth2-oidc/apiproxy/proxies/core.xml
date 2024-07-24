@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ProxyEndpoint name="core">
+  <HTTPProxyConnection>
+    <BasePath>/apijam-oidc/oauth2</BasePath>
+    <VirtualHost>secure</VirtualHost>
+  </HTTPProxyConnection>
+  <Description/>
+  <PreFlow name="PreFlow">
+    <Request>
+    </Request>
+    <Response/>
+  </PreFlow>
+
+  <Flows>
+    <Flow name="CORS-preflight">
+      <Request>
+        <Step>
+          <Condition>(request.header.Access-Control-Request-Method = null) OR (request.header.origin = null)</Condition>
+          <Name>RF-Bad-CORS-Request</Name>
+        </Step>
+      </Request>
+      <Response>
+      <Step>
+        <Name>AM-CORS-Preflight</Name>
+      </Step>
+      </Response>
+      <Condition>request.verb = "OPTIONS"</Condition>
+    </Flow>
+
+    <Flow name="authorization">
+      <Description>request to launch OIDC flow (From client app)</Description>
+      <Request>
+        <Step><Name>JS-ValidateRequest</Name></Step>
+        <Step>
+          <Condition>(error_description != null)</Condition>
+          <Name>RF-Invalid-Authorization-Request</Name>
+        </Step>
+        <Step>
+          <Condition>oidc_nonce != null and oidc_nonce != ""</Condition>
+          <Name>CL-Nonce</Name>
+        </Step>
+        <Step>
+          <Condition>nonce_cache_value != null</Condition>
+          <Name>AV-InvalidNonce</Name>
+        </Step>
+        <Step>
+          <Condition>(error_description != null)</Condition>
+          <Name>RF-Invalid-Authorization-Request</Name>
+        </Step>
+        <Step><Name>OAuthV2-GetOAuthInfo</Name></Step>
+        <Step><Name>AE-DeveloperApp-1</Name></Step>
+        <Step><Name>Extract-DevApp-Name</Name></Step>
+        <Step>
+          <Condition>oidc_nonce != null and oidc_nonce != ""</Condition>
+          <Name>CP-Nonce</Name>
+        </Step>
+        <Step><Name>AM-AuthorizationSession</Name></Step>
+        <Step><Name>CP-AuthorizationSession</Name></Step>
+      </Request>
+      <Response>
+        <Step><Name>JS-FigurePaths</Name></Step>
+        <Step><Name>AM-Redirect-Login-Application</Name></Step>
+      </Response>
+      <Condition>(proxy.pathsuffix MatchesPath "/authorize") and (request.verb = "GET")</Condition>
+    </Flow>
+
+    <Flow name="token">
+      <Description>The client app invokes this to exchange an authz code for a token, or to refresh a token</Description>
+      <Request>
+        <Step>
+          <Name>OAuthV2-GetOAuthInfo-FormParam</Name>
+          <Condition>request.header.authorization = null</Condition>
+        </Step>
+        <Step>
+          <Name>AE-DeveloperApp-FormParam</Name>
+          <Condition>request.header.authorization = null</Condition>
+        </Step>
+        <Step>
+          <Name>Extract-ConsumerSecret</Name>
+          <Condition>request.header.authorization = null</Condition>
+        </Step>
+        <Step>
+          <Name>BA-ClientCredentials</Name>
+          <Condition>request.header.authorization = null</Condition>
+        </Step>
+      </Request>
+
+      <Response>
+        <Step>
+          <Condition>request.formparam.grant_type = "refresh_token"</Condition>
+          <Name>OAuthV2-RefreshAccessToken</Name>
+        </Step>
+        <Step>
+          <Condition>request.formparam.grant_type != "refresh_token"</Condition>
+          <Name>OAuthV2-GenerateAccessToken-AuthCode</Name>
+        </Step>
+        <Step>
+          <Condition>request.formparam.grant_type != "refresh_token"</Condition>
+          <Name>Extract-Token-Response</Name>
+        </Step>
+        <Step>
+          <Condition>(token_scope ~~ ".*\bid_token\b.*")</Condition>
+          <Name>Get-Application-Attributes</Name>
+        </Step>
+
+        <!-- do the following three steps only if we want an id_token -->
+        <Step>
+          <Condition>(request.formparam.grant_type != "refresh_token") AND (token_scope ~~ ".*\bid_token\b.*")</Condition>
+          <Name>AV-ID-Token-Payload</Name>
+        </Step>
+
+        <Step>
+          <Condition>(request.formparam.grant_type != "refresh_token") AND (token_scope ~~ ".*\bid_token\b.*")</Condition>
+          <Name>AV-JWT-Variables</Name>
+        </Step>
+
+        <Step>
+          <Condition>(request.formparam.grant_type != "refresh_token") AND (token_scope ~~ ".*\bid_token\b.*")</Condition>
+          <Name>GenerateJWT-1</Name>
+        </Step>
+        <Step>
+          <Condition>(request.formparam.grant_type != "refresh_token") AND (token_scope ~~ ".*\bid_token\b.*")</Condition>
+          <Name>AM-Token-Response</Name>
+        </Step>
+        <Step>
+          <Condition>(request.formparam.grant_type = "refresh_token") OR NOT (token_scope ~~ ".*\bid_token\b.*")</Condition>
+          <Name>JS-GroomTokenResponse</Name>
+        </Step>
+        <Step>
+          <Name>AM-CORS</Name>
+        </Step>
+      </Response>
+      <Condition>(proxy.pathsuffix MatchesPath "/token") and (request.verb = "POST")</Condition>
+    </Flow>
+
+    <Flow name="auth">
+      <Description>The login-and-consent app invokes this to get the redirection URL, to get an implicit token, or a JWT</Description>
+      <!--
+          inbound request (x-www-form-urlencoded):
+          POST /auth
+
+          sessionid=xxxx
+          email=xxx
+          username=xxx
+          roles=xxxx
+          etc
+      -->
+      <Request>
+        <Step>
+          <Condition>request.formparam.sessionid != null and request.formparam.sessionid != ""</Condition>
+          <Name>CL-AuthorizationSession</Name>
+        </Step>
+        <Step>
+          <Condition>(request.formparam.sessionid = null or request.formparam.sessionid = "") or (session.Payload = null) or (session.Payload = "")</Condition>
+          <Name>RF-InvalidSession</Name>
+        </Step>
+        <Step><Name>JS-ExportJSONToContextVars</Name></Step>
+        <Step>
+          <Condition>response_type_id_token = true</Condition>
+          <Name>Get-Application-Attributes</Name>
+        </Step>
+        <Step><Name>AV-JWT-Vars</Name></Step>
+      </Request>
+
+      <Response>
+        <Step>
+          <!-- generate an authz code -->
+          <Condition>response_type_code = true</Condition>
+          <Name>OAuthV2-GenerateAuthorizationCode</Name>
+        </Step>
+        <Step>
+          <!-- generate a token -->
+          <Condition>response_type_token = true</Condition>
+          <Name>OAuthV2-GenerateAccessToken-Implicit</Name>
+        </Step>
+
+        <Step>
+          <Name>AV-JWT-Variables</Name>
+        </Step>
+
+        <Step>
+          <!-- generate a JWT (id_token), form 2 -->
+          <Condition>response_type_id_token = true AND response_type_code = false AND response_type_token = false</Condition>
+          <Name>GenerateJWT-2</Name>
+        </Step>
+
+        <Step>
+          <!-- generate a JWT (id_token), form 1 -->
+          <Condition>response_type_id_token = true AND (response_type_code = true OR response_type_token = true)</Condition>
+
+          <Name>GenerateJWT-1</Name>
+        </Step>
+
+        <Step><Name>JS-ConstructResponse</Name></Step>
+        <Step><Name>AM-Redirect-Relying-Party</Name></Step>
+      </Response>
+      <Condition>(proxy.pathsuffix MatchesPath "/auth") and (request.verb = "POST")</Condition>
+    </Flow>
+
+
+    <Flow name="logout">
+      <!-- https:///foo/basepath/logout?post_logout_redirect_uri=http%3A%2F%2Flocalhost%3A8100%2Fimplicit%2Flogout&state=Z8DhwtkjxY -->
+      <Request>
+      </Request>
+      <Response>
+        <Step>
+          <Condition>request.queryparam.post_logout_redirect_uri != null</Condition>
+          <Name>AM-Redirect-to-Logout</Name>
+        </Step>
+        <Step>
+          <Condition>request.queryparam.post_logout_redirect_uri = null</Condition>
+          <Name>AM-NoContent</Name>
+        </Step>
+      </Response>
+      <Condition>(proxy.pathsuffix MatchesPath "/logout") and (request.verb = "GET")</Condition>
+    </Flow>
+
+    <Flow name="DefaultFlow">
+      <Description/>
+      <Request>
+        <Step><Name>RF-UnknownRequest</Name></Step>
+      </Request>
+      <Response/>
+    </Flow>
+  </Flows>
+
+  <PostFlow name="PostFlow">
+    <Request/>
+    <Response/>
+  </PostFlow>
+
+  <RouteRule name="noroute"/>
+
+</ProxyEndpoint>

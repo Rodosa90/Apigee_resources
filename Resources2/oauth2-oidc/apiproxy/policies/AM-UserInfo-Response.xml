@@ -1,0 +1,7 @@
+<AssignMessage name="AM-UserInfo-Response">
+    <IgnoreUnresolvedVariables>true</IgnoreUnresolvedVariables>
+    <AssignTo createNew="true" transport="http" type="response"/>
+    <Set>
+      <Payload contentType="application/json">{userInfoResponse}</Payload>
+    </Set>
+</AssignMessage>

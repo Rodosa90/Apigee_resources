@@ -1,0 +1,10 @@
+<OAuthV2 name="OAuthV2-GenerateAccessToken-AuthCode">
+  <ExternalAuthorization>false</ExternalAuthorization>
+  <Operation>GenerateAccessToken</Operation>
+  <SupportedGrantTypes>
+    <GrantType>authorization_code</GrantType>
+  </SupportedGrantTypes>
+  <ExpiresIn>1800000</ExpiresIn> <!-- 30 minutes -->
+  <RefreshTokenExpiresIn>28800000</RefreshTokenExpiresIn> <!-- 8 hours -->
+  <GenerateResponse />
+</OAuthV2>

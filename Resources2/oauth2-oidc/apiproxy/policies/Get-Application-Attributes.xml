@@ -1,0 +1,3 @@
+<GetOAuthV2Info name="Get-Application-Attributes">
+  <ClientId ref="client_id"></ClientId>
+</GetOAuthV2Info>

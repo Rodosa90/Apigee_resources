@@ -1,0 +1,760 @@
+https://docs.oracle.com/cd/E19620-01/805-7644/6j76klopr/index.html
+
+https://gregdhttps://gregdorta.blogspot.com/2018/12/breve-introduccion-apigee.html#:~:text=Un%20API%20product%20es%20un,as%C3%AD%20como%20proveer%20caracter%C3%ADsitcas%20adicionales.orta.blogspot.com/2018/12/breve-introduccion-apigee.html#:~:text=Un%20API%20product%20es%20un,así%20como%20proveer%20caracterísitcas%20adicionales.
+
+
+
+
+
+
+https://www.youtube.com/watch?v=uKqqSctpP70  --- set up 
+
+ https://www.youtube.com/watch?v=58smxQu3P5k&t=557s   demo 
+
+
+
+Durante el último año he estado trabajando sobre la plataforma Apigee para el desarrollo de APIs. En el presente artículo recogeré una breve introducción a la plataforma en base a lo consultado para introducirme en esta plataforma así como resúmenes de la documentación existente.
+
+¿Qué es Apigee?
+
+Apigee es una plataforma que nos permite la administración del ciclo de vida completo de las APIs permitiéndonos diseñar, proteger, desplegar, supervisar y escalar estas.
+
+Apigee se ajusta al tráfico de las APIs en tiempo de ejecución y aplica un conjunto de políticas preconfiguradas, como la validación de claves, la administración de cuotas, la transformación, la autorización y el control del acceso.
+
+Apigee permite a los proveedores de las APIs la posibilidad de ofrecer a los desarrolladores un portal personalizable para que les resulte más fácil utilizarlas de forma segura y medir tanto el rendimiento como el uso.
+
+Apigee Edge
+
+Apigee Edge es una plataforma con la que es posible construir API proxies, que son APIs RESTfull basadas en HTTP, que permiten interactuar con los servicios provistos por una organización. Los API proxies proporcionan toda la potencia de la plataforma de APIs de Apigee para añadir seguridad a las llamadas a la API, monitorizar el tráfico, control de los mensajes, manejo de errores, caché, construir portales para el desarrollador, documentar APIs, analizar el tráfico de datos, proteger las APIs y mucho más.
+
+API proxy vs API product
+
+Un API proxy es el endpoint HTTP que los desarrolladores usan para acceder a los servicios de backend. Mientras sea posible, lo normal es que no se hagan accesibles API proxies individuales. En su lugar, se agrupan uno o más API proxies dentro de un API product.
+
+Un API product es un conjunto de API proxies combinados en un plan de servicios. Ese plan de servicio puede establecer limitaciones de acceso en los API proxies, proveer seguridad, permitir monitorización y análisis así como proveer caracterísitcas adicionales. Los API products son también el mecanismo principal de Edge para la autorización y control de acceso a las APIs.
+
+Estructura de un API proxy
+
+Un API proxy se conforma por dos tipos de endpoints:
+ProxyEndpoints: Define la manera en la que las aplicaciones clientes consumen las APIs. Los ProxyEndpoints se configuran como la definición de la URL del API proxy. Los proxy endpoints también determinan si las aplicaciones pueden acceder al API proxy mediante HTTP o HTTPs. Por lo general, se adjuntas las políticas en este punto para incluir las carateristicas comentadas con anterioridad: forzar la seguridad, chequear cuotas, otros tipos de control de acceso, etc...
+TargetEndpoints: Define la manera en la que el API proxy interactua con los servicios provistos por la organización o de terceros. Los TargetEndpoints se configuran para avanzar las peticiones a la API hacia el servicio apropiado, incluyendo la configuración de seguridad, protocolos HTTP o HTTPs y cualquier otra información de conexión necesaria. Es posible adjuntar políticas en este punto para asegurar que los mensajes de respuesta están formateado adecuadamente para la aplicación cliente que realizó la petición inicial.
+A continuación se puede visualizar los API proxies de la siguiente manera, incluyendo cómo sería el flujo de las peticiones:
+
+Esquema de flujo en un API proxy
+     Fuente: Documentación de Apigee. Qué es un flujo
+
+Políticas
+
+Una política (policy) es un componente de Edge que se pueden adjuntar a diferentes puntos en el flujo del mensaje a través de los API proxies (Preflow, Conditional Flows, PostFlow, PostClientFlow). Las políticas pueden transformar el formato de los mensajes,  forzar procesos de acceso, llamar a servicios remotos, autorizar usuarios, examinar contenido de mensajes en busca de potenciales amenzas y mucho más.
+
+Clasificación de políticas
+Políticas para administración del tráfico: permite configurar cachés, establecer límites de concurrencia, mitigar los efectos de picos en las peticiones, etc...
+Caching policies:
+InvalidateCache policy 
+LookupCache policy 
+PopulateCache policy 
+ResponseCache policy
+ConcurrentRateLimit policy
+Quota policy
+ResetQuota policy
+SpikeArrest policy
+Políticas de mediación: permite realizar transformación de mensajes, análisis y validación así como lanzar errores y alertas.
+AccessEntity policy
+AssignMessage policy
+ExtractVariables policy
+JSONtoXML policy
+KeyValueMapOperations policy
+RaiseFault policy
+SOAPMessageValidation policy
+XMLtoJSON policy
+XSLTransform policy 
+Políticas de seguridad: permite controlar el acceso a las APIs mediante Oauth, validación de claves de acceso a APIs y otras características de protección frente amenazas.
+AccessControl policy
+BasicAuthentication policy
+JSONThreadProtection policy
+JWT policies:
+DecodeJWT policy
+GenerateJWT policy
+VerifyJWTpolicy
+LDAP policy*†
+OAuth v2 policies:
+DeleteOAuthv2Info policy
+GetOAuthv2Info policy
+OAuthv2 policy
+SetOAuth v2 Info policy
+OAuth v1 policies:
+DeleteOAuthv1Info policy
+GetOAuthv1Info policy
+OAuthv1.0a policy
+RegularExpressionProtection policy
+SAMLAssertion policy
+VerifyAPIKey policy
+XMLThreatProtection policy
+Políticas de extensión: permite definir políticas con funcionalidades personalizada, como llamar a servicios, recolección de datos de mensajes, y llamadas a scripts de Java, JavaScript, y Python.
+FlowCallout policy
+JavaCallout policy
+JavaScript policy
+MessageLogging policy
+PythonScript policy
+ServiceCallout policy
+StatisticsCollector policy
+* Disponible solo seleccinando un Edge plans
+† Solo para instalaciones On-premise
+
+Con esto concluyo mi introducción a Apigee, enfocado en Apigee Edge, para el desarrollo de APIs. En posteriores entradas recogeré casos concretos a los que me he enfrentado o para los que he consultado información en la documentación y foros.
+
+Fuentes y enlaces de interés para complementar esta breve introducción:
+Página de Apigee
+Documentación oficial de Apigee
+Soporte y comunidad de Apigee
+
+
+
+app
+vzgbDN9fqcQzllVySm9fGE0wyleTYi8N
+VfAoDipTzjucfhyl
+
+credencilaes:
+
+
+maheshptlr@gmail.com
+Sahasra@1434
+
+https://login.apigee.com/
+
+
+
+
+
+mi test en apigee
+
+********************
+
+enviroment TEST , no he creado uno de prod
+
+http://maheshptlr-test.apigee.net/v1/pokeapi
+
+https://maheshptlr-test.apigee.net/v1/pokeapi
+
+
+
+http://maheshptlr-test.apigee.net/v1/rodocalculator
+
+https://maheshptlr-test.apigee.net/v1/rodocalculator
+
+
+http://maheshptlr-test.apigee.net/v1/calculatorRodo
+https://maheshptlr-test.apigee.net/v1/calculatorRodo
+
+
+
+
+
+http://maheshptlr-test.apigee.net/v1/testcalculator	Copy
+https://maheshptlr-test.apigee.net/v1/testcalculator
+
+
+
+
+http://maheshptlr-test.apigee.net/v1/testcalculator2	Copy
+https://maheshptlr-test.apigee.net/v1/testcalculator2
+
+
+
+
+https://maheshptlr-test.apigee.net/v1/rodo_accesscontrol
+
+apikey=vov6k21o9Gzo1YUbsMoJjGb5cPfoif0T
+
+
+******************
+
+
+rodo-test.apigee.net to 34.107.180.138
+
+
+
+apigee 
+
+
+
+api management  ---> we can use gatewaY tools like APIGEE , MUlesoft , axway  IBM CONNECT , lAYER 7 , DELL BHOOMI 
+server
+application ===> calculator API
+methods == GET , post , delete head patch put  verbs
+calculator
+/add
+/sub
+/mult
+/div
+
+
+operations endpoints , methods , resources, 
+
+postman tool response = 20 
+GET https://calculator.com/operations/add?a=10andb=10
+
+{
+	c = a+b;
+}
+https://calculator.com/operations/sub
+https://calculator.com/operations/mult
+https://calculator.com/operations/div
+
+
+web applicacation 
+web server application  server database 
+
+
+
+https://calculator.com/  --> IP ADRESS
+/OPERATION/DIV
+operations ---> URI path 
+/div operation name 
+
+
+security --> OAuht2.0 , JWT , SSl/TLS , APIKEY , FIREWALL--> ip whitelisting 
+
+
+https://calculator.com/ --> IP ADDRESS
+/operations/div
+
+
+
+benefits api manager:
+traffic control 
+performenace api 
+security 
+vendors --> gateway tools
+analyse  metrics --> the api
+client ---> GATEWAY TOOL (APIGEE)----> backend API TEAM
+
+client <---> GATEWAY TOOL (APIGEE)
+GATEWAY TOOL (APIGEE) <----> backend API TEAM
+
+
+APIGEE is ACTING AS A SERVER FOR THE CLIENT AND FOR THE BACKEND 
+
+
+
+
+
+GET https://calculator.com/operations/add?a=10andb=10 
+
+
+sin usar el api manager nosotros obtreneoms la respuest atal cual del backend es decirn usando el api manager poodemos ontener respuesta mock o personalizadas de la respuesta.
+
+
+
+
+
+
+2 clase
+
+
+Client <====> APIGEE
+Northbound calls/request.
+
+ APIGEE<===>BS
+Southbound calls /request.
+Mahesh Manne22:41
+API managenment 
+
+Client <====> APIGEE
+Northbound calls/request.
+
+ APIGEE<===>BS
+Southbound calls /request.
+
+POST MAN <--->https://dev-apigee.nissan.com/v1/calcoperations ===>
+
+https://dev-apigee.nissan.com/v1/calcoperations <=====>https://caluaclator.com/calcoperations/add a=10 and b=10
+                                                       {
+
+                                                        }
+
+
+Client <====> APIGEE
+Northbound calls/request.
+traffic management ===>quota and spike arrest
+vkj-uvkq-qmo
+
+
+
+
+clase 3 
+
+
+list out what are all runtime data it will be stored??
+
+asandra is used to store proxy rumtime data??
+list out what are all runtime data it will be stored??
+
+
+
+https://docs.apigee.com/private-cloud/v4.52.00/overv
+
+
+
+list out what are all runtime data it will be stored??
+
+asandra is used to store proxy rumtime data??
+list out what are all runtime data it will be stored??
+
+
+
+Casandra--->List of variables to be stored in the Casandra apart from accesstoken API Keys and Quota counters
+
+
+
+
+https://cloud.google.com/apigee/docs/api-platform/get-started/basic-concepts
+
+https://cloud.google.com/apigee/docs/api-platform/fundamentals/organization-structure
+
+
+
+
+cuenmta
+Realchelsea1
+rodoscd@gmail.com
+
+
+
+
+https://console.cloud.google.com/apigee/welcome?authuser=0&hl=en&project=newapigeepractice&pli=1
+Jayasrih06@gmail.com
+EKSDeveloper$10A
+
+maheshptlr@gmail.com
+Sahasra@1434
+
+https://login.apigee.com/
+
+
+
+
+
+**********
+
+
+
+el error 415 se soluciones en los hedears desactive el campo en postman  de accept-encoding
+
+
+Caluclator API 
+/add===>a=10 and b=10==>20==>only this endpoint 
+/sub===>a=10 and b=10==>20==>only this endpoint 
+/div===>a=10 and b=10==>20==>only this endpoint 
+/mul===>a=10 and b=10==>20==>only this endpoint
+
+
+
+
+Caluclator API
+/add===>a=10 and b=10==>20==>only this endpoint
+/sub===>a=10 and b=10==>20==>only this endpoint
+/div===>a=10 and b=10==>20==>only this endpoint
+/mul===>a=10 and b=10==>20==>only this endpoint
+Mahesh Manne10:47 p.m.
+task,
+Caluclator API
+/add===>a=10 and b=10==>20==>only this endpoint
+/sub===>a=10 and b=10==>20==>only this endpoint
+/div===>a=10 and b=10==>20==>only this endpoint
+/mul===>a=10 and b=10==>20==>only this endpoint
+
+Created one app with a product calulator dynamic proxy ...>
+proxy should return below error when we pass invalid apikey 
+HTTP status code 401
+{
+    "fault": {
+        "faultstring": "Invalid ApiKey",
+        "detail": {
+            "errorcode": "oauth.v2.InvalidApiKey"
+        }
+    }
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+Proxy endpoints
+client <--->APIGEE--->APIKEY Security
+target endpoints
+APIKEY Security
+APIGEE---->Target
+Remove the Query param APIKEY form APIGEE to Target
+
+
+
+
+
+
+two apps for the same products
+we can create custom attributes at product level
+You have to create custom attributes at product level and refrence those attribues at proxy ??
+
+
+
+
+
+apikey1
+vov6k21o9Gzo1YUbsMoJjGb5cPfoif0T
+
+apikey2
+pwRhnNlG7SuhLpGdzFKhVuW0ywYtowm4
+
+apikey3
+gqHD6VUMacYVqiJNnTXMYWt8wGocEQDy
+
+apikey4
+
+DvX4OoRSA2ZX1OUg28qCYdXptqSICyfh
+
+
+
+
+
+find the difference for when do we keep custom attributes at app level and when do we keep custom attributes at products level??
+
+
+https://docs.apigee.com/api-platform/reference/policies/quota-policy#access-counter
+
+
+
+
+
+notas:
+api consumer -->  we have a proxy  ---> back end api  ---
+
+generateaccess toekn creando un procy sin target 
+ehjempo: generateaccesstokerodo
+nueva appo Rodo
+
+
+
+para el alauthcode primero se obtiene esta antes de generat el token ---> authorization code  a diferencia del clien credentials
+
+
+
+grandTYps:
+credential client
+autorization code
+
+
+
+mi procy de generacion de token auth2.0 
+generateaccesstoken_rodo2
+
+para ejuutar este necesito pasar las credenciales de autenticancion de mi app creada secret  y la key  es decir   user name and password  y poner en basic authorization en postman
+en la seccion de authorization del postman
+
+http://maheshptlr-test.apigee.net/v1/generateaccesstoken_rodo2 [ - ]
+https://maheshptlr-test.apigee.net/v1/generateaccesstoken_rodo2
+
+
+este lo hizo maheshptlr-test
+generateAccesstoken_rodo
+
+
+mis apps de test 
+
+AppRodoAuth2.0
+key  dZwANpzWAOuJFqDDXI8MKWDZASvm1Alb
+secret h8Hs6cgZKgSXtMT5
+AppRodo2Auth2.0
+key   AvbbQqide2lq8abnkBKRkgqxr2G1OpwJ
+secret YhtioRQAOvO9vy0a
+
+
+
+
+numero de poliza
+
+1424171382
+
+folio de lata de numero telefonico 
+504270
+folio de cancelacion 
+504341
+
+
+
+
+
+Tengo que usatr verifyapikey ssiemore para los custom attributes.
+
+
+a nivel de app siempre.
+
+
+
+el refresh token solo se usa para authorization code no para clien credentials.
+
+
+getaccesstoken
+curl --location 'https://maheshptlr-test.apigee.net/getaccesstoken/access' \
+--header 'Content-Type: application/x-www-form-urlencoded' \
+--header 'Authorization: Basic SkxzM0F1RXI5ZTU2aXdlUjFoa2pxc0tpQXFFbER3Qkc6MEdaRTZ5c2dHckhkTFNtdQ==' \
+--data-urlencode 'grant_type=authorization_code' \
+--data-urlencode 'redirect_uri=https://oauth.pstmn.io/v1/callback' \
+--data-urlencode 'code=Lk7PbDpw' \
+--data-urlencode 'client_id=JLs3AuEr9e56iweR1hkjqsKiAqElDwBG' \
+--data-urlencode 'client_secret=0GZE6ysg
+
+
+
+Auth_code
+curl --location 'https://maheshptlr-test.apigee.net/getaccesstoken/Oauth_code?client_id=JLs3AuEr9e56iweR1hkjqsKiAqElDwBG&redirect_uri=https%3A%2F%2Foauth.pstmn.io%2Fv1%2Fcallback&response_type=code' \
+--header 'Authorization: Basic SkxzM0F1RXI5ZTU2aXdlUjFoa2pxc0tpQXFFbER3Qkc6MEdaRTZ5c2dHckhkTFNtdQ=='
+
+
+
+
+JWT
+https://jwt.io/introduction
+
+
+
+https://www.youtube.com/watch?v=MHnZoGHyThw  --- explicacion auth code grant type
+
+SSL/TLS
+https://docs.apigee.com/api-platform/system-administration/about-ssl?hl=en
+
+
+concepts:
+https://docs.apigee.com/api-platform/system-administration/about-ssl?hl=en
+
+
+
+este es para el sinipped code del 2 way ssl 
+https://docs.apigee.com/api-platform/reference/api-proxy-configuration-reference
+
+la configuration  se hace a nivel de proxy en proxy endpoint cuando es de consumer a apigee (Mrouuter) y en otro caso en el tarhget server cuando es de apigee a trarget server 
+
+para 1 way ssl lo unico u etenemos que hacert es crear tls ey store y nada mas 
+pero para que un api proxy tebnga 2 way ssl necentaoms hacer algo exytra que son snipped code. en los proxy endpointds.
+este se usa: esto te dice que soporta 2 way ssl
+
+
+<SSLInfo>
+      <Enabled>true</Enabled>
+      <ClientAuthEnabled>true</ClientAuthEnabled>
+      <KeyStore>myKeystore</KeyStore>
+      <KeyAlias>myKey</KeyAlias>
+      <TrustStore>myTruststore</TrustStore>
+</SSLInfo>
+
+
+
+buscar o soliciat la docuoo reuest para crear api proxys desde postman
+
+
+
+services call out
+politica en la cual tu peudes llamas apis servios o lo que sea que temga URL
+access token 
+
+
+aproxy ---> apigee_demo_manu(uso este proxy como back end) ---> proxy como back end 
+
+
+
+
+pendientes 
+implementar 
+service call out
+JWT 
+auth code
+
+
+
+
+
+
+apigee git hub
+https://github.com/apigee/api-platform-samples/tree/master/sample-proxies/oauth-advanced
+
+auth2.0 grant type
+https://www.developerro.com/2019/03/19/oauth-authentication-grant-types/#authorization-code
+
+jwt
+https://keepcoding.io/blog/que-es-jwt/
+
+https://jwt.io/
+
+
+tibco migration
+
+https://community.tibco.com/articles/uncategorized-records/best-practices-for-upgrading-tibco-businessworks-5-environments/
+https://support.tibco.com/s/article/Support-Policy-for-TIBCO-ActiveMatrix-BusinessWorks-5-13
+
+
+
+
+
+
+
+
+respoder : 
+vThere is way to call mutliple shared flows from a single position??
+
+
+create two proxies
+add each proxy to a single app
+get separate keys
+create base64 encoded string 
+add those base64 strings to KVM with proxy name as key and value is base 64 encoded string 
+use the same shared flow in both proxies
+
+
+
+
+Proxy name	Rodo_ServiceCallout1
+Proxy type	Reverse Proxy
+Proxy base path	/rodo_servicecallout1
+
+	
+https://maheshptlr-prod.apigee.net (Environment: prod)
+https://maheshptlr-test.apigee.net (Environment: test)
+default
+http://maheshptlr-prod.apigee.net (Environment: prod)
+http://maheshptlr-test.apigee.net (Environment: test)
+
+
+
+
+Proxy name	Rodo_ServiceCallout2
+Proxy type	Reverse Proxy
+Proxy base path	/rodo_servicecallout2
+
+VIRTUAL HOST	HOST ALIAS
+secure
+https://maheshptlr-prod.apigee.net (Environment: prod)
+https://maheshptlr-test.apigee.net (Environment: test)
+default
+http://maheshptlr-prod.apigee.net (Environment: prod)
+http://maheshptlr-test.apigee.net (Environment: test)
+
+
+
+CORS SERVER TO SERVER NO HABRA PROBLEMAS DE CORS POR EJEMPLO SI ES APIGEE TO API O R BACKE END 
+SI ES DESDE EL BROWSER A APIGGE SI HABRA PROBLEMAS PORQ UE LOS BROWSER SOLO SOPORTAN EL MISMO ORIGEN 
+
+
+
+fault error handling  usamos el proxy de testcalculator
+las faut rules son 
+bottom to top in ->>Porxyendpoint
+
+top to bottom --> TArgetendpoiints
+
+
+
+
+
+Proxy chaining
+https://docs.apigee.com/api-platform/fundamentals/connecting-proxies-other-proxies
+LocalTargetConnection
+Tasks
+1)add--->proxy--->addition
+2)sub--->proxy--->substraction
+3)mul--->proxy--->multplication
+4)div--->proxy--->division
+LocalTargetConnection
+Tasks
+1)add--->proxy--->addition
+2)sub--->proxy--->substraction
+3)mul--->proxy--->multplication
+4)div--->proxy--->division
+
+
+
+Extract variables policy:
+AM --> create varaible, header, query , path , request/response payloads, formparams.
+
+
+
+
+
+timeouts apigee
+
+https://docs.apigee.com/how-to-guides/configuring-io-timeout-best-practices
+
+configuring I/O TIMEOUTS
+rquest -- server --- response --- I/O TIME OUT --- INPUT OUT TIME 
+
+client --- router --- MP -- backend 
+
+
+streaming 
+https://docs.apigee.com/api-platform/develop/enabling-streaming?hl=en
+
+balancing
+https://docs.apigee.com/api-platform/deploy/load-balancing-across-backend-servers?hl=en
+
+managenment api calls
+https://apidocs.apigee.com/operations#api-products
+
+
+data masking
+
+curl --location --request DELETE 'https://api.enterprise.apigee.com/v1/organizations/maheshptlr/apis/radha-firstproxy/maskconfigs/default' \
+--header 'Authorization: Basic bWFoZXNocHRsckBnbWFpbC5jb206U2FoYXNyYUAxNDM0'
+Unmasking
+
+curl --location 'https://api.enterprise.apigee.com/v1/organizations/maheshptlr/apis/radha-firstproxy/maskconfigs' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Basic bWFoZXNocHRsckBnbWFpbC5jb206U2FoYXNyYUAxNDM0' \
+--data '{
+    "variables": 
+    [
+    "request.header.user-agent",
+    "request.header.password"
+  ]
+
+  }
+'
+masking
+
+
+
+
+troubleshooting
+https://docs.apigee.com/static/files/ApigeeEdgeTroubleshootingGuide.pdf
+
+
+debugging 
+hay diferentes formas
+
+
+
+https://www.geeksforgeeks.org/difference-between-rest-api-and-soap-api/
+
+
+
+rama-firstproxy
+var headers = {
+    'Authorization': 'Basic bWFoZXNocHRsckBnbWFpbC5jb206U2FoYXNyYUAxNDM0'
+};
+// var myRequest = new Request("https://api.enterprise.apigee.com/v1/organizations/maheshptlr/apiproducts/product1-management", "GET", headers);
+
+// asynchronous POST for performance reasons
+//httpClient.send(myRequest);
+//print(myRequest.IsSuccess());
+
+
+payload  size in apigee es de 10 MB maximo
+
+streaming
+https://docs.apigee.com/api-platform/develop/enabling-streaming?hl=en
+
+apirest ysoap
+https://www.geeksforgeeks.org/difference-between-rest-api-and-soap-api/
